@@ -22,10 +22,10 @@ public class DownloaderImpl implements Downloader {
 
 	@Override
 	public void download(URL url, Path destination) {
-
 		try (final CloseableHttpClient client = HttpClients.createDefault();
-
 				final CloseableHttpResponse response = client.execute(new HttpGet(url.toString()))) {
+			Files.deleteIfExists(destination);
+
 			final int status = response.getStatusLine().getStatusCode();
 			if (status >= 200 && status < 300) {
 				final HttpEntity entity = response.getEntity();

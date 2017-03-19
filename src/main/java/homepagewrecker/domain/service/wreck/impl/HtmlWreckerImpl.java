@@ -3,7 +3,6 @@ package homepagewrecker.domain.service.wreck.impl;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import homepagewrecker.domain.service.wreck.HtmlWrecker;
@@ -24,17 +23,38 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 	public String wreck(String htmlStr, WreckCondition cond) {
 		String convertHtml = converter.convert(htmlStr, new ConvertCondition(cond.getSourceUrl()));
 		Document doc = Jsoup.parse(convertHtml);
-		Elements elements = doc.getAllElements();
-		int size = elements.size();
-
+		Element body = doc.getElementsByTag("body").get(0);
+		int size = body.getAllElements().size();
+		System.out.println("対象ノードの数" + size);
 
 		//TODO 実験レベル
-		for(int i = 0;i < 100; i++){
-			Element element = elements.remove((int)Math.random() * size);
-			elements.add((int)Math.random() * size, element);
+		for(int i = 0;i < 50; i++){
+			int deleteTargetIndex = ((int)(Math.random() * size));
+			Element element = body.getAllElements().get(deleteTargetIndex);
+			if(body.getElementsByTag(element.tagName()).size() >= 2){
+				int childSize = body.getElementsByTag(element.tagName()).size();
+			}
+			System.out.println("削除対象インデックス:" + deleteTargetIndex);
+			if(!element.tagName().equals("body")){
+				element.remove();
+				size = body.getAllElements().size();
+				System.out.println("対象ノードの数" + size);
+
+				int addTargetIndex = ((int)(Math.random() * size));
+				body.getAllElements().get(addTargetIndex).appendChild(element);
+
+				size = body.getAllElements().size();
+				System.out.println("対象ノードの数" + size);
+			}
+//			Element targetElement = elements.get(deleteTargetIndex);
+//			if(targetElement.tagName().equals("body")){
+//				continue;
+//			}
+//			Element element = elements.remove(deleteTargetIndex);
+////			elements.add(((int)(Math.random() * size)), element);
 		}
 
-		return elements.html();
+		return doc.outerHtml();
 	}
 
 }

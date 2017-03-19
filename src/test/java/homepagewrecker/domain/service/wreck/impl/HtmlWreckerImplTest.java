@@ -9,10 +9,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import homepagewrecker.domain.service.download.Downloader;
 import homepagewrecker.domain.service.download.impl.DownloaderImpl;
@@ -25,12 +21,9 @@ import relative_to_absolute_path_html.reader.ReadTargetCondition;
 import relative_to_absolute_path_html.reader.Reader;
 import relative_to_absolute_path_html.reader.impl.ReaderImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
 public class HtmlWreckerImplTest {
 
-	@Autowired
-	HtmlWrecker wrecker;
+	private HtmlWrecker wrecker = new HtmlWreckerImpl();
 
 	private Downloader downloader = new DownloaderImpl();
 
@@ -40,12 +33,13 @@ public class HtmlWreckerImplTest {
 
 	@Test
 	public void test() throws IOException {
-		URL targetUrl = new URL("https://www.google.co.jp/search?q=%E3%83%90%E3%83%8A%E3%83%8A%E3%83%9E%E3%83%B3&rlz=1C5CHFA_enJP727JP728&espv=2&source=lnms&tbm=isch&sa=X&ved=0ahUKEwj3qeqO-eHSAhVEgbwKHSSKA9EQ_AUICCgD&biw=1440&bih=799");
+		URL targetUrl = new URL("http://news.nicovideo.jp/watch/nw2685692");
 		Path target = Paths.get("src/test/resources/test.html");
-		Files.delete(target);
+//		Files.delete(target);
 		downloader.download(targetUrl, target);
 		String htmlStr = reader.read(new ReadTargetCondition(target, StandardCharsets.UTF_8));
 		String convertHtml = converter.convert(htmlStr, new ConvertCondition(targetUrl));
+		Files.deleteIfExists(Paths.get("src/test/resources/test2.html"));
 		Files.write(Paths.get("src/test/resources/test2.html"), convertHtml.getBytes(), StandardOpenOption.CREATE);
 
 		String html = wrecker.wreck(convertHtml, new WreckCondition(targetUrl));

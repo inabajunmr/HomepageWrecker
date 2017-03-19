@@ -1,9 +1,9 @@
 package homepagewrecker.domain.service.wreck.impl;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import homepagewrecker.domain.service.wreck.HtmlWrecker;
@@ -11,7 +11,6 @@ import homepagewrecker.domain.service.wreck.WreckCondition;
 import relative_to_absolute_path_html.converter.ConvertCondition;
 import relative_to_absolute_path_html.converter.Converter;
 import relative_to_absolute_path_html.converter.impl.ConverterImpl;
-import relative_to_absolute_path_html.reader.ReadTargetCondition;
 import relative_to_absolute_path_html.reader.Reader;
 import relative_to_absolute_path_html.reader.impl.ReaderImpl;
 
@@ -22,16 +21,20 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 	Converter converter = new ConverterImpl();
 
 	@Override
-	public String wreck(Path path, WreckCondition cond) {
-		try {
-			String html = reader.read(new ReadTargetCondition(path, StandardCharsets.UTF_8));
-			String convertHtml = converter.convert(html, new ConvertCondition(cond.getSourceUrl()));
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+	public String wreck(String htmlStr, WreckCondition cond) {
+		String convertHtml = converter.convert(htmlStr, new ConvertCondition(cond.getSourceUrl()));
+		Document doc = Jsoup.parse(convertHtml);
+		Elements elements = doc.getAllElements();
+		int size = elements.size();
+
+
+		//TODO 実験レベル
+		for(int i = 0;i < 100; i++){
+			Element element = elements.remove((int)Math.random() * size);
+			elements.add((int)Math.random() * size, element);
 		}
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+
+		return elements.html();
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -21,18 +22,20 @@ public class DownloaderImpl implements Downloader {
 
 	@Override
 	public void download(URL url, Path destination) {
-        try (final CloseableHttpClient client = HttpClients.createDefault();
-                final CloseableHttpResponse response = client.execute(new HttpGet(url.toString()))) {
-            final int status = response.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                final HttpEntity entity = response.getEntity();
-//                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("r--rw-r--"));
-//                Path temp = Files.createTempFile(destination, null, ".html", attr);
-                Files.write(destination, entity == null ? new byte[0] : EntityUtils.toByteArray(entity));
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-        } catch (ClientProtocolException e) {
+
+		try (final CloseableHttpClient client = HttpClients.createDefault();
+
+				final CloseableHttpResponse response = client.execute(new HttpGet(url.toString()))) {
+			final int status = response.getStatusLine().getStatusCode();
+			if (status >= 200 && status < 300) {
+				final HttpEntity entity = response.getEntity();
+				//                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("r--rw-r--"));
+				//                Path temp = Files.createTempFile(destination, null, ".html", attr);
+				Files.write(destination, EntityUtils.toString(entity).getBytes(), StandardOpenOption.CREATE);
+			} else {
+				throw new ClientProtocolException("Unexpected response status: " + status);
+			}
+		} catch (ClientProtocolException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (IOException e) {

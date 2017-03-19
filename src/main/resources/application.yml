@@ -1,0 +1,3 @@
+settings:
+  download:
+    destination: "src/test/resource/homepagewrecker/domain/service/download/impl"

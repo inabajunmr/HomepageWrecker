@@ -3,6 +3,11 @@ package homepagewrecker.domain.service.download;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * 加工対象のファイルをダウンロードするためのクラス
+ * @author inabajunmr
+ *
+ */
 public interface Downloader {
 
 	/**

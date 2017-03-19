@@ -23,12 +23,14 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.session:spring-session')
+//	compile('org.springframework.session:spring-session')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
 
 	compile project(':RelativeToAbsolutePathHtml')
 

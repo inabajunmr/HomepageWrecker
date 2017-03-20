@@ -2,6 +2,7 @@ package homepagewrecker.domain.service.download.impl;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -31,7 +32,7 @@ public class DownloaderImpl implements Downloader {
 				final HttpEntity entity = response.getEntity();
 				//                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("r--rw-r--"));
 				//                Path temp = Files.createTempFile(destination, null, ".html", attr);
-				Files.write(destination, EntityUtils.toString(entity).getBytes(), StandardOpenOption.CREATE);
+				Files.write(destination, EntityUtils.toString(entity, StandardCharsets.UTF_8).getBytes(), StandardOpenOption.CREATE);
 			} else {
 				throw new ClientProtocolException("Unexpected response status: " + status);
 			}

@@ -33,10 +33,11 @@ public class HtmlWreckerImplTest {
 
 	@Test
 	public void test() throws IOException {
-		URL targetUrl = new URL("http://news.nicovideo.jp/watch/nw2685692");
+		URL targetUrl = new URL("https://www.google.co.jp/search?q=%E3%83%90%E3%83%8A%E3%83%8A%E3%83%9E%E3%83%B3&rlz=1C5CHFA_enJP727JP728&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjxhIrKzuTSAhVJUrwKHSRJBZkQ_AUICigD&biw=1440&bih=799");
 		Path target = Paths.get("src/test/resources/test.html");
 //		Files.delete(target);
 		downloader.download(targetUrl, target);
+
 		String htmlStr = reader.read(new ReadTargetCondition(target, StandardCharsets.UTF_8));
 		String convertHtml = converter.convert(htmlStr, new ConvertCondition(targetUrl));
 		Files.deleteIfExists(Paths.get("src/test/resources/test2.html"));

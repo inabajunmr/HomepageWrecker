@@ -3,6 +3,7 @@ package homepagewrecker.domain.service.wreck.impl;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import homepagewrecker.domain.service.wreck.HtmlWrecker;
@@ -28,33 +29,48 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 		System.out.println("対象ノードの数" + size);
 
 		//TODO 実験レベル
-		for(int i = 0;i < 50; i++){
-			int deleteTargetIndex = ((int)(Math.random() * size));
-			Element element = body.getAllElements().get(deleteTargetIndex);
-			if(body.getElementsByTag(element.tagName()).size() >= 2){
-				int childSize = body.getElementsByTag(element.tagName()).size();
-			}
-			System.out.println("削除対象インデックス:" + deleteTargetIndex);
-			if(!element.tagName().equals("body")){
-				element.remove();
-				size = body.getAllElements().size();
-				System.out.println("対象ノードの数" + size);
+		for(int i = 0;i < size/10; i++){
+			//変換対象のエレメント
+			int targetIndex = ((int)(Math.random() * size));
+			Element target = body.getAllElements().get(targetIndex);
+			String selfTag = target.tagName();
+			String parentTag = target.parent().tagName();
 
-				int addTargetIndex = ((int)(Math.random() * size));
-				body.getAllElements().get(addTargetIndex).appendChild(element);
+			//ターゲットとなるタグを削除
+			target.remove();
 
-				size = body.getAllElements().size();
-				System.out.println("対象ノードの数" + size);
+			//削除後のエレメント数
+			size = body.getAllElements().size();
+
+			if(random(2) == 0){
+				System.out.println("PARENT");
+				//親が同じタグに差し込む
+				Elements sameParents = body.getElementsByTag(parentTag);
+				if(sameParents.size() == 0){
+					break;
+				}
+				sameParents.get(random(sameParents.size())).appendChild(target);
+			}else{
+				System.out.println("TARGET");
+				//targetと同一タグの同一階層に差し込む
+				Elements sameTarget = body.getElementsByTag(selfTag);
+				if(sameTarget.size() == 0){
+					break;
+				}
+				sameTarget.get(random(sameTarget.size())).after(target);
 			}
-//			Element targetElement = elements.get(deleteTargetIndex);
-//			if(targetElement.tagName().equals("body")){
-//				continue;
-//			}
-//			Element element = elements.remove(deleteTargetIndex);
-////			elements.add(((int)(Math.random() * size)), element);
 		}
 
 		return doc.outerHtml();
 	}
 
+
+	/**
+	 * 引数を最大値としてランダムな整数を返却します。
+	 * @param max
+	 * @return
+	 */
+	private int random(int max){
+		return ((int)(Math.random() * max));
+	}
 }

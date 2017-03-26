@@ -31,8 +31,11 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 		//TODO 実験レベル 係数を使って破壊具合をコントロールできるようにする
 
 		//全エレメントの数を25で割った数を平均として、入れ替えをループする
-		int wreckCount = size / (25 * (cond.getWreckCoefficient() / 100)) ;
-		System.out.println(wreckCount);
+		System.out.println("WRECKC:"+cond.getWreckCoefficient());
+		int wreckCount = size / (25) ;
+		wreckCount = (wreckCount * cond.getWreckCoefficient()) / 100;
+		System.out.println("WRECK:"+wreckCount);
+
 		for(int i = 0; i < wreckCount; i++){
 			//変換対象のエレメント
 			int targetIndex = ((int)(Math.random() * size));
@@ -47,7 +50,6 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 			size = body.getAllElements().size();
 
 			if(random(2) == 0){
-				System.out.println("PARENT");
 				//親が同じタグに差し込む
 				Elements sameParents = body.getElementsByTag(parentTag);
 				if(sameParents.size() == 0){
@@ -55,7 +57,6 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 				}
 				sameParents.get(random(sameParents.size())).appendChild(target);
 			}else{
-				System.out.println("TARGET");
 				//targetと同一タグの同一階層に差し込む
 				Elements sameTarget = body.getElementsByTag(selfTag);
 				if(sameTarget.size() == 0){

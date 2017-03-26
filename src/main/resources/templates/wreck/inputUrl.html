@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Homepage wrecker</title>
 </head>
 <body>
-	<form action="wreck" method="post" accept-charset="utf-8">
-		<input type="text" name="url" value="" placeholder=""/>
+	<form action="wreck" th:object="${wreckForm}" method="post" accept-charset="utf-8">
+		<label>URL</label>
+		<input type="text" th:field="*{url}" value="100"/>
+		<label>度合い</label>
+		<input type="number" th:field="*{wreckCoefficient}" value="100"/>
+		<label>秩序</label>
+		<input type="number" th:field="*{regularityCoefficient}" value="100"/>
+		<label>増殖</label>
+		<input type="number" th:field="*{increaseCoefficient}" value="100"/>
 		<input type="submit" name="" value="submit"/>
 	</form>
 

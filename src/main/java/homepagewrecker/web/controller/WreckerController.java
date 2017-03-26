@@ -9,12 +9,14 @@ import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import homepagewrecker.domain.service.download.Downloader;
 import homepagewrecker.domain.service.wreck.HtmlWrecker;
 import homepagewrecker.domain.service.wreck.WreckCondition;
+import homepagewrecker.web.form.WreckForm;
 import relative_to_absolute_path_html.converter.ConvertCondition;
 import relative_to_absolute_path_html.converter.Converter;
 import relative_to_absolute_path_html.converter.impl.ConverterImpl;
@@ -39,21 +41,25 @@ public class WreckerController {
 
 	//TODO test用なのでXSS対策してないです
     @RequestMapping("inputUrl")
-    String viewInputUrlForm() {
+    String viewInputUrlForm(@ModelAttribute WreckForm form) {
         return "wreck/inputUrl";
     }
 
     @RequestMapping(value = "wreck", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    String wreck(String url) {
+    String wreck(@ModelAttribute WreckForm form) {
 
     	String destinationPath = destination + "web.html";
 
     	try {
-			downloader.download(new URL(url), Paths.get(destinationPath));
+			downloader.download(new URL(form.getUrl()), Paths.get(destinationPath));
 			String html = reader.read(new ReadTargetCondition(Paths.get(destinationPath), StandardCharsets.UTF_8));
-			String convertHtml = converter.convert(html, new ConvertCondition(new URL(url)));
-			String result = wrecker.wreck(convertHtml, new WreckCondition(new URL(url)));
+			String convertHtml = converter.convert(html, new ConvertCondition(new URL(form.getUrl())));
+			String result = wrecker.wreck(convertHtml, new WreckCondition(
+					new URL(form.getUrl()),
+					form.getWreckCoefficient(),
+					form.getRegularityCoefficient(),
+					form.getIncreaseCoefficient()));
 			return result;
 		} catch (MalformedURLException e) {
 			// TODO 自動生成された catch ブロック
@@ -63,7 +69,7 @@ public class WreckerController {
 			e.printStackTrace();
 		}
 
-        return "wreck/inputUrl";
+        return viewInputUrlForm(form);
     }
 
 

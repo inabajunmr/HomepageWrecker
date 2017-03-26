@@ -40,17 +40,22 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 			//変換対象のエレメント
 			int targetIndex = ((int)(Math.random() * size));
 			Element target = body.getAllElements().get(targetIndex);
-			String selfTag = target.tagName();
-			String parentTag = target.parent().tagName();
 
 			//ターゲットとなるタグを削除
-			target.remove();
+			if(target.parent() != null){
+				target.remove();
+			}
 
 			//削除後のエレメント数
 			size = body.getAllElements().size();
 
 			if(randomBool(cond.getRegularityCoefficient() * 10)){
 				//親が同じタグに差し込む
+				Element parent = target.parent();
+				if(parent == null){
+					continue;
+				}
+				String parentTag = parent.tagName();
 				Elements sameParents = body.getElementsByTag(parentTag);
 				if(sameParents.size() == 0){
 					continue;
@@ -63,6 +68,7 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 
 			}else{
 				//targetと同一タグの同一階層に差し込む
+				String selfTag = target.tagName();
 				Elements sameTarget = body.getElementsByTag(selfTag);
 				if(sameTarget.size() == 0){
 					continue;
@@ -75,6 +81,7 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 				while(randomBool(cond.getIncreaseCoefficient() * 5)){
 					System.out.println("count:" + count);
 
+					//TODO parentはあるのにchildがないパターンがある？
 					insertTargetElement.after(target.clone());
 					if(count++ == 30) break;
 				}

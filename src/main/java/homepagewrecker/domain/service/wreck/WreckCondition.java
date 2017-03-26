@@ -18,9 +18,9 @@ public class WreckCondition {
 	public WreckCondition(URL sourceUrl) {
 		super();
 		this.sourceUrl = sourceUrl;
-		this.wreckCoefficient = 100;
-		this.regularityCoefficient = 100;
-		this.increaseCoefficient = 100;
+		this.wreckCoefficient = 10;
+		this.regularityCoefficient = 10;
+		this.increaseCoefficient = 10;
 	}
 
 	public int getWreckCoefficient() {
@@ -42,17 +42,17 @@ public class WreckCondition {
 	private URL sourceUrl;
 
 	/**
-	 * どれくらいめちゃくちゃにするかの係数（100を普通とする）
+	 * どれくらいめちゃくちゃにするかの係数（10を普通とする）
 	 */
 	private int wreckCoefficient;
 
 	/**
-	 * 秩序係数.低いほど秩序を保ったまま破壊する（100を普通とする.）
+	 * 秩序係数.低いほど秩序を保ったまま破壊する（10を普通とする.）
 	 */
 	private int regularityCoefficient;
 
 	/**
-	 * 増加係数.高いほど要素数が増える（100を普通とし、0の場合削除のみが行われる）
+	 * 増加係数.高いほど要素数が増える（10を普通とし、0の場合削除のみが行われる）
 	 */
 	private int increaseCoefficient;
 

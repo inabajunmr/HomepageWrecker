@@ -32,8 +32,8 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 
 		//全エレメントの数を25で割った数を平均として、入れ替えをループする
 		System.out.println("WRECKC:"+cond.getWreckCoefficient());
-		int wreckCount = size / (25) ;
-		wreckCount = (wreckCount * cond.getWreckCoefficient()) / 100;
+		int wreckCount = size / 25 ;
+		wreckCount = (wreckCount * cond.getWreckCoefficient()) / 10;
 		System.out.println("WRECK:"+wreckCount);
 
 		for(int i = 0; i < wreckCount; i++){
@@ -49,13 +49,18 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 			//削除後のエレメント数
 			size = body.getAllElements().size();
 
-			if(random(2) == 0){
+			if(randomBool(cond.getRegularityCoefficient() * 10)){
 				//親が同じタグに差し込む
 				Elements sameParents = body.getElementsByTag(parentTag);
 				if(sameParents.size() == 0){
 					continue;
 				}
-				sameParents.get(random(sameParents.size())).appendChild(target);
+				int count = 0;
+				while(true){
+					sameParents.get(random(sameParents.size())).appendChild(target.clone());
+					if(count++ > 100) break;
+				}
+
 			}else{
 				//targetと同一タグの同一階層に差し込む
 				Elements sameTarget = body.getElementsByTag(selfTag);
@@ -64,13 +69,41 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 				}
 
 				//TODO たまにnullぽで落ちる
-				sameTarget.get(random(sameTarget.size())).after(target);
+				int count = 0;
+				int targetindex = random(sameTarget.size());
+				Element insertTargetElement = sameTarget.get(targetindex);
+				while(randomBool(cond.getIncreaseCoefficient() * 5)){
+					System.out.println("count:" + count);
+
+					insertTargetElement.after(target.clone());
+					if(count++ == 30) break;
+				}
 			}
 		}
 
 		return doc.outerHtml();
 	}
 
+	/**
+	 * 引数の確率でtrueを返却します。
+	 * @param percent
+	 * @return
+	 */
+	private boolean randomBool(int percent){
+		if(percent >= 100){
+			return true;
+		}
+
+		if(percent <= 0){
+			return false;
+		}
+
+		int value = random(100);
+		if(value <= percent){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * 引数を最大値としてランダムな整数を返却します。

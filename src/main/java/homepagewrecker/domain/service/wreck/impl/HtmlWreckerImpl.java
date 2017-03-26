@@ -56,9 +56,9 @@ public class HtmlWreckerImpl implements HtmlWrecker{
 					continue;
 				}
 				int count = 0;
-				while(true){
+				while(randomBool(cond.getIncreaseCoefficient() * 5)){
 					sameParents.get(random(sameParents.size())).appendChild(target.clone());
-					if(count++ > 100) break;
+					if(count++ > 30) break;
 				}
 
 			}else{
